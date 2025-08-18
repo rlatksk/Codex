@@ -58,11 +58,6 @@ query GetHeroData($heroId: Short!, $bracketBasicIds: [RankBracketBasicEnum]) {
         }
       }
     }
-    winMonth {
-      heroId
-      matchCount
-      winCount
-    }
   }
 }
 """
@@ -186,31 +181,10 @@ else:
         if interaction_data and 'heroStats' in interaction_data:
             hero_stats = interaction_data['heroStats']
             
-            win_stats_map = {
-                item['heroId']: {
-                    'matchCount': item['matchCount'],
-                    'winCount': item['winCount']
-                }
-                for item in hero_stats.get('winMonth', [])
-            }
-
-            hero_1_stats = win_stats_map.get(hero_id)
-
-            advantage_data = interaction_data.get('heroStats', {}).get('heroVsHeroMatchup', {}).get('advantage', [{}])
+            advantage_data = hero_stats.get('heroVsHeroMatchup', {}).get('advantage', [{}])
             
             if not advantage_data:
                 continue
-
-            if hero_1_stats:
-              # These are the general stats for heroId1.
-              match_count = hero_1_stats['matchCount']
-              win_count = hero_1_stats['winCount']
-              win_rate = win_count / match_count if match_count > 0 else 0
-
-        advantage_data = hero_stats.get('heroVsHeroMatchup', {}).get('advantage', [{}])
-        
-        if not advantage_data:
-            continue
 
         # --- Process Opponent Data ('vs') ---
         vs_data = advantage_data[0].get('vs', [])
@@ -221,10 +195,6 @@ else:
                 "type": "vs",
                 "hero_2_id": opponent['heroId2'],
                 "hero_2_name": hero_id_to_name.get(opponent['heroId2'], "Unknown"),
-                # Overall stats for heroId1
-                "match_count": match_count,
-                "win_count": win_count,
-                "win_rate": round(win_rate, 4),
                 "advantage": round(opponent['synergy'] / 100, 5)
             }
             
@@ -247,10 +217,6 @@ else:
                 "type": "with",
                 "hero_2_id": teammate['heroId2'],
                 "hero_2_name": hero_id_to_name.get(teammate['heroId2'], "Unknown"),
-                # Overall stats for heroId1
-                "match_count": match_count,
-                "win_count": win_count,
-                "win_rate": round(win_rate, 4),
                 "advantage": round(teammate['synergy'] / 100, 5)
             }
             
