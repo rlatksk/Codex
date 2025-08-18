@@ -57,8 +57,8 @@ print("✅ Synergy and Counter matrices have been built from the CSV data.")
 
 # Define your team composition and the enemy team
 # You can change these lists to match your draft
-teammates = []
-enemies = ['Wraith King']
+teammates = ['Anti-Mage']
+enemies = ['Medusa']
 available_heroes = [hero for hero in heroes_name if hero not in teammates and hero not in enemies]
 
 # Get indices for the heroes
@@ -87,7 +87,6 @@ counter_value = mdl.sum(heroes_counter[j][i] * x[i] for i in available_indices f
 
 # The model will maximize the sum of these values
 mdl.maximize(base_value + synergy_with_teammates + synergy_between_new_heroes + counter_value)
-
 
 # --- Constraints ---
 # The number of heroes to pick for the remaining slots on the team

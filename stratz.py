@@ -67,6 +67,24 @@ query GetHeroData($heroId: Short!, $bracketBasicIds: [RankBracketBasicEnum]) {
 }
 """
 
+# 3. New query specifically for position-based statistics
+GET_HERO_POSITION_STATS_QUERY = """
+query GetHeroPositionStats($heroIds: [Short], $bracketBasicIds: [RankBracketBasicEnum]) {
+  heroStats {
+    stats(
+      heroIds: $heroIds, 
+      bracketBasicIds: $bracketBasicIds, 
+      groupByPosition: true
+    ) {
+      heroId
+      position
+      matchCount
+      winCount
+    }
+  }
+}
+"""
+
 
 def fetch_graphql_data(query, variables=None):
     """Generic function to send a GraphQL request to the Stratz API."""
@@ -102,6 +120,47 @@ else:
     heroes = all_heroes_data.get('constants', {}).get('heroes', [])
     hero_id_to_name = {hero['id']: hero['displayName'] for hero in heroes}
     print(f"   > Successfully found {len(heroes)} heroes.")
+
+    # --- Step 1.5: Fetch Position-Based Statistics for All Heroes ---
+    print("\n⏳ Step 1.5: Fetching position-based win rates for all heroes...")
+    
+    position_variables = {
+        "heroIds": [hero['id'] for hero in heroes],
+        "bracketBasicIds": TARGET_BRACKET
+    }
+    
+    position_data = fetch_graphql_data(GET_HERO_POSITION_STATS_QUERY, position_variables)
+    position_stats_map = {}
+    
+    if position_data and 'heroStats' in position_data:
+        stats_data = position_data['heroStats'].get('stats', [])
+        
+        # Group position stats by hero ID and position
+        for stat in stats_data:
+            hero_id = stat['heroId']
+            position = stat['position']
+            
+            if hero_id not in position_stats_map:
+                position_stats_map[hero_id] = {}
+            
+            position_stats_map[hero_id][position] = {
+                'matchCount': stat['matchCount'],
+                'winCount': stat['winCount'],
+                'winRate': stat['winCount'] / stat['matchCount'] if stat['matchCount'] > 0 else 0
+            }
+        
+        print(f"   > Successfully fetched position data for {len(position_stats_map)} heroes.")
+    else:
+        print("   > Warning: Could not fetch position-based statistics.")
+    
+    # Position mapping for readable names
+    POSITION_NAMES = {
+        "POSITION_1": "Safelane",
+        "POSITION_2": "Midlane", 
+        "POSITION_3": "Offlane",
+        "POSITION_4": "Soft Support",
+        "POSITION_5": "Hard Support"
+    }
 
     # --- Step 2: Iterate and Fetch Interaction Data for Each Hero ---
     all_interactions = []
@@ -156,34 +215,54 @@ else:
         # --- Process Opponent Data ('vs') ---
         vs_data = advantage_data[0].get('vs', [])
         for opponent in vs_data:
-            all_interactions.append({
+            interaction_row = {
                 "hero_1_id": hero_id,
                 "hero_1_name": hero_name,
                 "type": "vs",
                 "hero_2_id": opponent['heroId2'],
                 "hero_2_name": hero_id_to_name.get(opponent['heroId2'], "Unknown"),
-                # 3. Use the pre-fetched stats for heroId1 in every row.
+                # Overall stats for heroId1
                 "match_count": match_count,
                 "win_count": win_count,
                 "win_rate": round(win_rate, 4),
-                "advantage": round(opponent['synergy'] / 100, 5) 
-            })
+                "advantage": round(opponent['synergy'] / 100, 5)
+            }
+            
+            # Add position-specific win rates for hero_1
+            hero_positions = position_stats_map.get(hero_id, {})
+            for pos_key, pos_name in POSITION_NAMES.items():
+                pos_stats = hero_positions.get(pos_key, {'matchCount': 0, 'winCount': 0, 'winRate': 0})
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_matches"] = pos_stats['matchCount']
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_wins"] = pos_stats['winCount']
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_winrate"] = round(pos_stats['winRate'], 4)
+            
+            all_interactions.append(interaction_row)
 
         # --- Process Teammate Data ('with') ---
         with_data = advantage_data[0].get('with', [])
         for teammate in with_data:
-            all_interactions.append({
+            interaction_row = {
                 "hero_1_id": hero_id,
                 "hero_1_name": hero_name,
                 "type": "with",
                 "hero_2_id": teammate['heroId2'],
                 "hero_2_name": hero_id_to_name.get(teammate['heroId2'], "Unknown"),
-                # Also use heroId1's stats here.
+                # Overall stats for heroId1
                 "match_count": match_count,
                 "win_count": win_count,
                 "win_rate": round(win_rate, 4),
                 "advantage": round(teammate['synergy'] / 100, 5)
-            })
+            }
+            
+            # Add position-specific win rates for hero_1
+            hero_positions = position_stats_map.get(hero_id, {})
+            for pos_key, pos_name in POSITION_NAMES.items():
+                pos_stats = hero_positions.get(pos_key, {'matchCount': 0, 'winCount': 0, 'winRate': 0})
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_matches"] = pos_stats['matchCount']
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_wins"] = pos_stats['winCount']
+                interaction_row[f"{pos_name.lower().replace(' ', '_')}_winrate"] = round(pos_stats['winRate'], 4)
+            
+            all_interactions.append(interaction_row)
 
         # Add a delay to be respectful to the API
         time.sleep(1)
