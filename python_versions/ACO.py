@@ -58,7 +58,7 @@ for index, row in counter_df.iterrows():
 print("✅ Data processed in", f"{time.time() - start_time:.3f}s")
 
 # --- 2. Configuration ---
-teammates = [('Lycan', 2), ('Kez', 1)]  # (hero_name, position_index)
+teammates = [('Invoker', 3)]  # (hero_name, position_index)
 enemies = ['Axe', 'Meepo', 'Huskar']
 
 # Get occupied and available positions

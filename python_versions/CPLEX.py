@@ -145,7 +145,7 @@ synergy_with_teammates = mdl.sum(heroes_synergy[i][j] * x[i, p]
 
 # 3. Synergy between newly picked heroes (optimized quadratic terms)
 # Filter out weak synergies to reduce problem size
-MIN_SYNERGY_THRESHOLD = 0.05  # Only consider synergies above this threshold
+MIN_SYNERGY_THRESHOLD = 0  # Only consider synergies above this threshold
 synergy_between_new_heroes = mdl.sum(heroes_synergy[i][j] * x[i, p1] * x[j, p2] 
                                     for i in available_hero_indices 
                                     for j in available_hero_indices
