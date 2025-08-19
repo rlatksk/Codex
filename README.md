@@ -41,7 +41,7 @@ python CPLEX.py   # Mathematical optimization
 
 ### Algorithm Support
 - **Ant Colony Optimization (ACO)** - Primary metaheuristic approach
-- **Mixed Integer Linear Programming (MILP)** - Exact mathematical solution
+- **Mixed Integer Quadratic Programming (MIQP)** - Exact mathematical solution
 - **Greedy Heuristics** - Fast approximation methods
 
 ## 🏗️ Project Structure
@@ -117,23 +117,6 @@ enemies := []string{"Anti-Mage", "Storm Spirit", "Axe"}
 - `3`: Soft Support (Position 4) - Support
 - `4`: Hard Support (Position 5) - Hard Support
 
-### Sample Output
-```
-🎉 Optimal Team Found with ACO!
-
-Current Team:
- - Invoker (Soft Support) ✅
-
-ACO Recommended Picks:
- - Phantom Assassin (Safelane) 🐜
- - Shadow Fiend (Midlane) 🐜  
- - Tidehunter (Offlane) 🐜
- - Crystal Maiden (Hard Support) 🐜
-
-⚡ ACO completed in 0.176s
-📊 Best solution score: 2.4342
-```
-
 ## 🔧 Installation & Setup
 
 ### Prerequisites
@@ -198,11 +181,7 @@ The system uses hero interaction data from Dota 2 matches. The CSV file contains
 3. **Greedy Construction** - Fast approximation baseline
 
 ### Future Enhancements
-- [ ] Multi-threaded ACO with goroutines
-- [ ] Machine learning integration for dynamic weights
-- [ ] Real-time draft analysis
-- [ ] Web interface with live match integration
-- [ ] Tournament meta analysis
+- [ ] Web interface
 
 ## 📊 Dataset Information
 
@@ -212,24 +191,8 @@ The system uses hero interaction data from Dota 2 matches. The CSV file contains
 **Interactions**: Synergy and counter relationships  
 **Positions**: 5 traditional roles with win rate data
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 🙏 Acknowledgments
 
 - **Stratz** for providing comprehensive Dota 2 data
 - **ACO Research Community** for algorithmic foundations
 - **Dota 2 Community** for gameplay insights and feedback
-
-<div align="center">
-
-**⭐ Star this repository if it helped your Dota 2 drafting! ⭐**
-
-Made with ❤️ for the Dota 2 community
-
-</div>
