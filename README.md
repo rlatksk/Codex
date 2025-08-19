@@ -2,7 +2,6 @@
 
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat&logo=python)](https://python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A high-performance optimization system for Dota 2 hero drafting using **Ant Colony Optimization (ACO)** and mathematical programming approaches. Get optimal hero recommendations in under 1 second!
 
@@ -191,12 +190,6 @@ The system uses hero interaction data from Dota 2 matches. The CSV file contains
 4. **Update pheromones** based on solution quality
 5. **Repeat** until convergence or iteration limit
 
-### Scoring Components
-- **Position Win Rate** (40%): Hero's historical performance in position
-- **Team Synergy** (30%): Synergy with existing teammates  
-- **Internal Synergy** (20%): Synergy between recommended heroes
-- **Counter Value** (10%): Effectiveness against enemy heroes
-
 ## 🔬 Research & Development
 
 ### Implemented Approaches
@@ -227,22 +220,11 @@ The system uses hero interaction data from Dota 2 matches. The CSV file contains
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - **Stratz** for providing comprehensive Dota 2 data
 - **ACO Research Community** for algorithmic foundations
 - **Dota 2 Community** for gameplay insights and feedback
-
-## 📞 Contact & Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/codex/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/codex/discussions)
-
----
 
 <div align="center">
 
